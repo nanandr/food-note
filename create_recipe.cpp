@@ -17,7 +17,8 @@ void tambah_recipe_makanan()
 
 void lihat_recipe_makanan()
 {
-
+    recipe_makanan rm;
+    
 };
 
 
