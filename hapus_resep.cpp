@@ -48,12 +48,12 @@ int nav (const vector<string>& pages) {
 // example usage
 int main () {
     title();
-    int navigate_to = nav({"Buat Resep Baru", "Daftar Resep", "Cari Resep", "Kembali"});
+    int navigate_to = nav({"Buat Resep Baru", "Daftar Resep", "Cari Resep", "Hapus Resep",  "Kembali"});
     cout << navigate_to;
     header("Buat Resep Baru");
 }
 
 void hapus_recipe()
 {
-    cout << "JJSS";
+    cout << "Hapus Resep Milik anda";
 }
