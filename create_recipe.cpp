@@ -39,7 +39,7 @@ void tambah_recipe_makanan()
         step_count++;
     }
 
-    cin.ignore();
+
     file << "Nama Hidangan: " << resep.nama_hidangan << endl;
     file << "Bahan-bahan: " << resep.bahan_bahan << endl;
     file << "Cara Memasak: " << endl;
@@ -66,7 +66,6 @@ void lihat_recipe_makanan()
     cout << "-------------------------------------------" << endl;
     
 }
-
 
 int main () 
 {
