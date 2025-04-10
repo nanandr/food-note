@@ -3,17 +3,18 @@
 
 using namespace std;
 
+string app_name = "Aplikasi Catat Resep";
 string border_thick = "======================== \n";
 string border_thin = "------------------------ \n";
 
-void app_name (string text) {
+void title () {
     cout << border_thick;
-    cout << text << endl << endl;
+    cout << app_name << endl << endl;
     cout << border_thick;
 }
 
-// page title (e.g. halaman daftar resep, buat resep)
-void title (string text) {
+// page header (e.g. halaman "daftar resep", "buat resep")
+void header (string text) {
     cout << border_thin;
     cout << text << endl << endl;
     cout << border_thin;
@@ -46,7 +47,8 @@ int nav (const vector<string>& pages) {
 
 // example usage
 int main () {
-    title("Aplikasi Catat Resep");
+    title();
     int navigate_to = nav({"Buat Resep Baru", "Daftar Resep", "Cari Resep", "Kembali"});
     cout << navigate_to;
+    header("Buat Resep Baru");
 }
