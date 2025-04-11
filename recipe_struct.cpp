@@ -1,6 +1,8 @@
-#include <stdio.h>
-#include <vector>
 #include <iostream>
+#include <stdio.h>
+#include <string>
+#include <vector>
+#include "csv_reader.h"
 using namespace std;
 
 struct Bahan {
@@ -16,7 +18,8 @@ struct Recipe {
 };
 
 int main() {
-    Recipe resep1;
-    resep1.nama_resep = "Ayam Goreng";
+    string filename = "./database/recipes.csv";
+    readCSV(filename);
+    return 0;
 }
 
