@@ -1,5 +1,5 @@
 #include <iostream>
-#include <cstdio>
+#include <fstream>
 using namespace std;
 
 struct recipe_makanan {
@@ -19,7 +19,7 @@ void show_recipe(recipe_makanan daftar[], int jumlah)
     }
 }
 
-int choose_recipe(int jumlah, recipe_makanan daftar[])
+int choose_recipe(int jumlah) 
 {
     int urutan;
     while (true) 
@@ -29,33 +29,32 @@ int choose_recipe(int jumlah, recipe_makanan daftar[])
 
         if (urutan >= 1 && urutan <= jumlah) 
         {
-            return urutan -1;
+            return urutan - 1;
         } else {
-            cout << "Nomor tidak valid! Silakan coba lagi.\n\n";
-            show_recipe(daftar, jumlah);
+            cout << "Nomor tidak valid! Silahkan coba lagi.\n\n";
         }
     }
 }
 
+
 void delete_recipe(int nomor, int jumlah, recipe_makanan daftar[]) 
 {
-    FILE* file = fopen("database/recipe.csv", "w");
-    if (!file) 
+    ofstream file("database/recipe.csv");
+    if (!file.is_open()) 
     {
-        cout << "Gagal membuka file untuk menulis!" << endl;
+        cout << "Gagal membuka file" << endl;
         return;
     }
 
-    for (int i = 0; i < jumlah; i++) 
-    {
+    for (int i = 0; i < jumlah; i++) {
         if (i != nomor) {
-            fprintf(file, "%s, %s, %s\n",
-                daftar[i].nama_hidangan.c_str(),
-                daftar[i].bahan_bahan.c_str(),
-                daftar[i].cara_memasak.c_str());
+            file << daftar[i].nama_hidangan << ", "
+                 << daftar[i].bahan_bahan << ", "
+                 << daftar[i].cara_memasak << "\n";
         }
     }
-    fclose(file);
+
+    file.close();
     cout << "Resep berhasil dihapus!" << endl;
 }
 
@@ -84,7 +83,7 @@ int main()
     fclose(file);
 
     show_recipe(daftar, jumlah);
-    int nomor = choose_recipe(jumlah, daftar);
+    int nomor = choose_recipe(jumlah);
     delete_recipe(nomor, jumlah, daftar);
 
     return 0;
