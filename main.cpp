@@ -42,7 +42,11 @@ void title(string* text) {
     cout << border_thin;
 }
 
-/* TAMBAH RESEP MAKANAN */
+
+
+/* 
+TAMBAH RESEP MAKANAN 
+*/
 void tambah_recipe_makanan() {
     Recipe resep;
     ofstream file("./database/recipe.csv", ios::app);
@@ -115,7 +119,11 @@ void tambah_recipe_makanan() {
 
 }
 
-/* LIHAT RESEP MAKANAN */
+
+
+/* 
+LIHAT RESEP MAKANAN 
+*/
 void lihat_recipe_makanan() {
     ifstream file("./database/recipe.csv");
     if (!file) {
@@ -164,6 +172,111 @@ void lihat_recipe_makanan() {
     file.close();
 }
 
+
+
+/*
+UPDATE RESEP MAKANAN 
+*/
+void edit_recipe_makanan(const string& filename) 
+{
+    ifstream file(filename);
+    if (!file.is_open()) {
+        cout << "Database tidak ditemukan!" << endl;
+        return;
+    }
+
+    vector<string> lines;
+    string line;
+
+    getline(file, line);
+    lines.push_back(line);
+
+    while (getline(file, line)) {
+        lines.push_back(line);
+    }
+
+    file.close();
+
+    int id;
+    cout << "Masukkan ID resep yang ingin diedit; ";
+    cin >> id;
+    cin.ignore();
+
+    bool found = false;
+
+    for (int i= 1; i < lines.size(); i++) {
+        stringstream ss(lines[i]);
+        string token;
+        getline(ss, token, ',');
+        int currentID = stoi(token);
+
+        if (currentID == id) {
+            found = true;
+            string nama, bahan, langkah;
+            getline(ss, nama, ',');
+            getline(ss, bahan, ',');
+            getline(ss, langkah, ',');
+
+            cout << "Resep ditemukan!" << endl;
+            cout << "Nama Hidangan: " << nama << endl;
+            cout << "Bahan-bahan: " << bahan << endl;
+
+            cout << "Cara Memasak: ";
+            stringstream streamStep(langkah);
+            string step;
+            int nomor = 1;
+            while(getline(streamStep, step, '|')) {
+                cout << " " << nomor++ << ". " << step << endl;
+            }
+
+            string input;
+
+            cout << "\nMasukkan nama hidangan baru (jika kosong = tidak diubah): ";
+            getline(cin, input);
+            if(!input.empty()) nama = input;
+
+            cout << "Masukkan bahan-bahan baru (jika kosong = tidak diubah): ";
+            getline(cin, input);
+            if(!input.empty()) bahan = input;
+
+            cout << "Masukkan langkah memasak baru (JIKA SELESAI, KETIK end): ";
+
+            string langkahBaru = "", barisLangkah;
+            int nomors = 1;
+            while (true) {
+                cout << nomors++ << ".";
+                getline(cin, barisLangkah);
+                if (barisLangkah == "end") break;
+                if (!langkahBaru.empty()) langkahBaru += "|";
+                langkahBaru += barisLangkah;
+            }
+            if (!langkahBaru.empty()) langkah = langkahBaru;
+
+
+            lines[i] = to_string(currentID) + "," + nama + "," + bahan + "," + langkah;
+            break;
+        }
+    }
+
+    if (!found) {
+        cout << "Resep tidak ditemukan!" << endl;
+        return;
+    }
+
+    ofstream outFile(filename);
+    for(const string& l : lines) {
+        outFile << l << "\n";
+    }
+    outFile.close();
+
+    cout << "Resep berhasil diperbarui!" << endl;
+}
+
+
+
+/* 
+ALGORITMA MENCARI RESEP 
+*/
 int nav(const vector<string>& pages) {
     int choice;
     for (int i = 0; i < pages.size(); i++) {
@@ -208,8 +321,6 @@ void resep_gkada() {
     nav({"Kembali"});
 }
 
-
-/* ALGORITMA MENCARI RESEP */
 void cari_resep() {
     cin.ignore();
     string judul = "Cari Resep";
