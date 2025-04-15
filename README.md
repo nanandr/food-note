@@ -12,4 +12,4 @@ Jika user malas membuat resep baru, mereka dapat mencari resep yang sudah tersed
   <li> Raihan Fauzi Rakhman (2403872)</li>
 </ul>
 <br>
-<b>UTS SDA KELOMPOK 4</b>
+<b>UTS STRUKDAT KELOMPOK 4</b>
