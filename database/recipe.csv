@@ -1,2 +1,3 @@
-id,nama,bahan,langkah
-1,Ayam Goreng,Ayam Tepung Minyak Kompor,Step 1 Step 2
+
+"Resep 1","Something",""
+"Ayam Goreng","Ayam, Minyak Goreng, Kompor","Langkah 1: Langkah 1 | Langkah 2: Langkah 2"
