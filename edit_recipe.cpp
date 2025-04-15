@@ -4,18 +4,23 @@
 using namespace std;
 
 
+void baca_database(string nama_file) 
+{
+    string filename = nama_file;
+    ifstream file(filename);
 
+    if (!file) {
+        cout << "Database tidak ditemukan!" << endl;
+        return;
+    }
+}
 void edit_recipe_makanan() 
 {
-    string database_name = "./database/recipe.csv";
-    readCSV(database_name);
+    baca_database("recipe.csv");
+    return ;
 }
 
 int main() {
     edit_recipe_makanan();
-    return 0;
 }
-
-
-
 
