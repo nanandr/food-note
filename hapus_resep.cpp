@@ -1,59 +1,91 @@
 #include <iostream>
-#include <vector>
-
+#include <cstdio>
 using namespace std;
 
-string app_name = "Aplikasi Catat Resep";
-string border_thick = "======================== \n";
-string border_thin = "------------------------ \n";
+struct recipe_makanan {
+    string nama_hidangan;
+    string bahan_bahan;
+    string cara_memasak;
+};
 
-void title () {
-    cout << border_thick;
-    cout << app_name << endl << endl;
-    cout << border_thick;
-}
-
-// page header (e.g. halaman "daftar resep", "buat resep")
-void header (string text) {
-    cout << border_thin;
-    cout << text << endl << endl;
-    cout << border_thin;
-}
-
-// navigate between 1-9, 0 is kembali/keluar
-// kembali/keluar has to be in the last (e.g. [buat resep, cari resep, kembali])
-int nav (const vector<string>& pages) {
-    int choice;
-    for (int i = 0; i < pages.size(); i++) {
-        if (pages[i] == "Kembali" || pages[i] == "Keluar") {
-            cout << "[0] " << pages[i] << endl;       
-        }
-        else {
-            cout << "[" << i + 1 << "] " << pages[i] << endl;
-        }
-    }
-    cout << border_thin;
-    cout << "Navigasi ke halaman: ";
-    cin >> choice;
-    if (choice < 0 || choice > pages.size()) {
-        cout << "Pilihan tidak valid" << endl;
-        return -1;
-    }
-    cout << endl;
-    // logic to check if navigate_to exists
-    return choice;
-}
-
-
-// example usage
-int main () {
-    title();
-    int navigate_to = nav({"Buat Resep Baru", "Daftar Resep", "Cari Resep", "Hapus Resep",  "Kembali"});
-    cout << navigate_to;
-    header("Buat Resep Baru");
-}
-
-void hapus_recipe()
+void show_recipe(recipe_makanan daftar[], int jumlah) 
 {
-    cout << "Hapus Resep Milik anda";
+    cout << "======================\n";
+    cout << "Daftar Resep\n";
+    cout << "======================\n";
+    for (int i = 0; i < jumlah; i++) 
+    {
+        cout << i + 1 << ". " << daftar[i].nama_hidangan << endl;
+    }
+}
+
+int choose_recipe(int jumlah, recipe_makanan daftar[])
+{
+    int urutan;
+    while (true) 
+    {
+        cout << "Masukkan nomor resep yang ingin dihapus: ";
+        cin >> urutan;
+
+        if (urutan >= 1 && urutan <= jumlah) 
+        {
+            return urutan -1;
+        } else {
+            cout << "Nomor tidak valid! Silakan coba lagi.\n\n";
+            show_recipe(daftar, jumlah);
+        }
+    }
+}
+
+void delete_recipe(int nomor, int jumlah, recipe_makanan daftar[]) 
+{
+    FILE* file = fopen("database/recipe.csv", "w");
+    if (!file) 
+    {
+        cout << "Gagal membuka file untuk menulis!" << endl;
+        return;
+    }
+
+    for (int i = 0; i < jumlah; i++) 
+    {
+        if (i != nomor) {
+            fprintf(file, "%s, %s, %s\n",
+                daftar[i].nama_hidangan.c_str(),
+                daftar[i].bahan_bahan.c_str(),
+                daftar[i].cara_memasak.c_str());
+        }
+    }
+    fclose(file);
+    cout << "Resep berhasil dihapus!" << endl;
+}
+
+int main() 
+{
+    FILE* file = fopen("database/recipe.csv", "r");
+    if (!file) 
+    {
+        cout << "File tidak ditemukan!" << endl;
+        return 1;
+    }
+
+    recipe_makanan daftar[100];
+    int jumlah = 0;
+
+    char buffer_nama[100], buffer_bahan[200], buffer_cara[300];
+
+    while (fscanf(file, " %99[^,], %199[^,], %[^\n]\n", 
+        buffer_nama, buffer_bahan, buffer_cara) == 3) 
+        {
+        daftar[jumlah].nama_hidangan = buffer_nama;
+        daftar[jumlah].bahan_bahan = buffer_bahan;
+        daftar[jumlah].cara_memasak = buffer_cara;
+        jumlah++;
+    }
+    fclose(file);
+
+    show_recipe(daftar, jumlah);
+    int nomor = choose_recipe(jumlah, daftar);
+    delete_recipe(nomor, jumlah, daftar);
+
+    return 0;
 }
