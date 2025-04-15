@@ -1,33 +1,31 @@
 #include <iostream>
 #include <vector>
+#include <fstream>
+#include <sstream>
 
 using namespace std;
 
 string border_thick = "======================== \n";
 string border_thin = "------------------------ \n";
 
-void app_name (string text) {
+void app_name(string* text) {
     cout << border_thick;
-    cout << text << endl << endl;
+    cout << *text << endl << endl;
     cout << border_thick;
 }
 
-// page title (e.g. halaman daftar resep, buat resep)
-void title (string text) {
+void title(string* text) {
     cout << border_thin;
-    cout << text << endl << endl;
+    cout << *text << endl << endl;
     cout << border_thin;
 }
 
-// navigate between 1-9, 0 is kembali/keluar
-// kembali/keluar has to be in the last (e.g. [buat resep, cari resep, kembali])
-int nav (const vector<string>& pages) {
+int nav(const vector<string>& pages) {
     int choice;
     for (int i = 0; i < pages.size(); i++) {
         if (pages[i] == "Kembali" || pages[i] == "Keluar") {
             cout << "[0] " << pages[i] << endl;       
-        }
-        else {
+        } else {
             cout << "[" << i + 1 << "] " << pages[i] << endl;
         }
     }
@@ -39,40 +37,37 @@ int nav (const vector<string>& pages) {
         return -1;
     }
     cout << endl;
-    // logic to check if navigate_to exists
     return choice;
 }
 
+void lihat_recipe_makanan() {
+    ifstream* file = new ifstream("database/recipe.csv");
+    if (!file->is_open()) {
+        cout << "Database tidak ditemukan!" << endl;
+        delete file;
+        return;
+    }
 
-// UI CARI RESEP
-
-// tampilkan resep jika ditemukan
-void show_recipe() {
-    title("Buat Resep Baru");
-    cout << "Nama Hidangan: Rendang\n";
-    cout << "Bahan-bahan:\n";
-    cout << "[1] Daging 1kg\n";
-    cout << "[2] Bawang Merah 2ons\n";
-    cout << "[n] Santan 2liter\n";
-    cout << "Cara Memasak:\n";
-    cout << "[1] Panaskan\n";
-    cout << "[2] Aduk\n";
-    cout << "[n] Sajikan\n";
-    cout << border_thin;
-
-    nav({"Kembali"});
+    string line;
+    cout << " ---------- Daftar Resep Makanan ---------- " << endl;
+    while (getline(*file, line)) {
+        cout << line << endl;
+    }
+    file->close();
+    delete file;
+    cout << "-------------------------------------------" << endl;
 }
 
-// resep tidak ditemukan
 void resep_gkada() {
-    title("Resep tidak ditemukan");
+    string judul = "Resep tidak ditemukan";
+    title(&judul);
     nav({"Kembali"});
 }
 
-// UI cari resep
 void cari_resep() {
-    cin.ignore(); 
-    title("Cari Resep");
+    cin.ignore();
+    string judul = "Cari Resep";
+    title(&judul);
 
     string keyword;
     cout << "Nama Hidangan: ";
@@ -80,16 +75,45 @@ void cari_resep() {
 
     cout << border_thin;
 
-    if (keyword == "Rendang" || keyword == "rendang") {
-        show_recipe();
-    } else {
+    ifstream* file = new ifstream("database/recipe.csv");
+    if (!file->is_open()) {
+        cout << "Database tidak ditemukan!" << endl;
+        delete file;
+        return;
+    }
+
+    string line;
+    bool found = false;
+    while (getline(*file, line)) {
+        stringstream ss(line);
+        string id, namaResep, bahan, langkah;
+        getline(ss, id, ',');
+        getline(ss, namaResep, ',');
+        getline(ss, bahan, ',');
+        getline(ss, langkah);
+    
+        if (keyword == namaResep) {
+            cout << "Resep ditemukan!\n";
+            cout << "Nama   : " << namaResep << endl;
+            cout << "Bahan  : " << bahan << endl;
+            cout << "Langkah: " << langkah << endl;
+            found = true;
+            break;
+        }
+    }
+    
+
+    file->close();
+    delete file;
+
+    if (!found) {
         resep_gkada();
     }
 }
 
-// main program
 int main() {
-    app_name("Cari Resep");
+    string nama_aplikasi = "Cari Resep";
+    app_name(&nama_aplikasi);
 
     while (true) {
         int choice = nav({"Cari Resep", "Keluar"});
