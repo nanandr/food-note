@@ -399,6 +399,9 @@ void cari_resep_makanan()
         stringstream ss(line);
         string namaResep, bahan, langkah;
         getline(ss, namaResep, ',');
+        if (!namaResep.empty() && namaResep.front() == '"')
+            namaResep = namaResep.substr(1, namaResep.size() - 2 );
+            
         getline(ss, bahan, ',');
         getline(ss, langkah);
 
