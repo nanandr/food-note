@@ -483,39 +483,75 @@ int pilih_resep_akan_dihapus(int jumlah)
     }
 }
 
-void hapus_resep(int nomor, int jumlah, Recipe daftar[])
+void hapus_resep()
 {
-    ofstream file("database/recipe.csv");
+    ifstream file("database/recipe.csv");
     if (!file.is_open())
     {
-        cout << "Gagal membuka file" << endl;
+        cout << "Gagal membuka file!" << endl;
         return;
     }
 
+    Recipe daftar[100]; 
+    string line;
+    int jumlah = 0;
+
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        string nama, bahan, langkah;
+
+        getline(ss, nama, ',');
+        getline(ss, bahan, ',');
+        getline(ss, langkah);
+
+        // simpan ke array
+        daftar[jumlah].name = nama;
+        daftar[jumlah].ingredient = nullptr; 
+        daftar[jumlah].steps.push_back(langkah);
+        jumlah++;
+    }
+    file.close();
+
+    // Tampilkan daftar resep
+    cout << "Daftar Resep:\n";
     for (int i = 0; i < jumlah; i++)
     {
-        if (i != nomor)
-        {
-            // jadiin steps biar satu string aja
-            string combinedSteps;
-            for (size_t j = 0; j < daftar[i].steps.size(); ++j)
-            {
-                combinedSteps += daftar[i].steps[j];
-                if (j != daftar[i].steps.size() - 1)
-                {
-                    combinedSteps += " | ";
-                }
-            }
-
-            file << daftar[i].name << ", "
-                 << daftar[i].ingredient << ", "
-                 << combinedSteps << "\n";
-        }
+        cout << "[" << i + 1 << "] " << daftar[i].name << endl;
     }
 
-    file.close();
+    int nomor;
+    cout << "Masukkan nomor resep yang ingin dihapus: ";
+    cin >> nomor;
+
+    if (nomor < 1 || nomor > jumlah)
+    {
+        cout << "Nomor tidak valid!" << endl;
+        return;
+    }
+
+    nomor--; 
+
+    ofstream outfile("database/recipe.csv");
+    for (int i = 0; i < jumlah; i++)
+    {
+        if (i == nomor)
+            continue;
+
+        outfile << daftar[i].name << ",,\"";
+        for (size_t j = 0; j < daftar[i].steps.size(); ++j)
+        {
+            outfile << daftar[i].steps[j];
+            if (j != daftar[i].steps.size() - 1)
+                outfile << "|";
+        }
+        outfile << "\"" << endl;
+    }
+    outfile.close();
+
     cout << "Resep berhasil dihapus!" << endl;
 }
+
 
 int main()
 {
@@ -550,6 +586,7 @@ int main()
         // Delete Resep
         else if (nav == 5)
         {
+            hapus_resep();
         }
 
         // Keluar
