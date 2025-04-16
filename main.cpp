@@ -232,32 +232,39 @@ void edit_resep_makanan()
     cout << "Masukkan nama resep yang ingin diedit: ";
     cin.ignore();
     getline(cin, namaResep);
-    if (!namaResep.empty() && namaResep.front() == '"')
-        namaResep = namaResep.substr(1, namaResep.size() - 2 );
-
-    cout << "\"namaResep\"";
 
     bool found = false;
 
     for (int i = 1; i < lines.size(); i++)
     {
         stringstream ss(lines[i]);
-        string currentRecipeName;
+        string currentRecipeName, bahan, langkah;
         getline(ss, currentRecipeName, ',');
+        getline(ss, bahan, ',');
+        getline(ss, langkah, ',');
+
+        if (!currentRecipeName.empty() && currentRecipeName.front() == '"')
+            currentRecipeName = currentRecipeName.substr(1, currentRecipeName.size() - 2);
 
         if (currentRecipeName == namaResep)
         {
             found = true;
-            string nama, bahan, langkah;
-            getline(ss, nama, ',');
-            getline(ss, bahan, ',');
-            getline(ss, langkah, ',');
 
-            cout << "Resep ditemukan!" << endl;
-            cout << "Nama Hidangan: " << nama << endl;
-            cout << "Bahan-bahan: " << bahan << endl;
-
-            cout << "Cara Memasak: ";
+            cout << "Nama Resep         : " << currentRecipeName << endl;
+            cout << "Bahan-bahan        : " << endl;
+            stringstream bahanSS(bahan);
+            string pair;
+            while (getline(bahanSS, pair, ';'))
+            {
+                size_t pos = pair.find(':');
+                if (pos != string::npos)
+                {
+                    string ingName = pair.substr(0, pos);
+                    string ingAmount = pair.substr(pos + 1);
+                    cout << "- " << ingName << " (" << ingAmount << ")" << endl;
+                }
+            }
+            cout << "Cara Memasak: " << endl;
             stringstream streamStep(langkah);
             string step;
             int nomor = 1;
@@ -271,12 +278,12 @@ void edit_resep_makanan()
             cout << "\nMasukkan nama hidangan baru (jika kosong = tidak diubah): ";
             getline(cin, input);
             if (!input.empty())
-                nama = input;
+                currentRecipeName = "\"" + input + "\"";
 
-            cout << "Masukkan bahan-bahan baru (jika kosong = tidak diubah): ";
+            cout << "Masukkan bahan-bahan baru, dengan format [bahan:jumlah;bahan..n] (kosong = tidak diubah): ";
             getline(cin, input);
             if (!input.empty())
-                bahan = input;
+                bahan = "\"" + input + "\"";
 
             cout << "Masukkan langkah memasak baru (JIKA SELESAI, KETIK end): ";
 
@@ -293,9 +300,9 @@ void edit_resep_makanan()
                 langkahBaru += barisLangkah;
             }
             if (!langkahBaru.empty())
-                langkah = langkahBaru;
+                langkah = "\"" + langkahBaru + "\"";
 
-            lines[i] = nama + "," + bahan + "," + langkah;
+            lines[i] = currentRecipeName + "," + bahan + "," + langkah;
             break;
         }
     }
@@ -336,11 +343,12 @@ int nav(const vector<string> &pages)
     cout << border_thin;
     cout << "Navigasi ke halaman: ";
     cin >> choice;
-    while(cin.fail()) {
+    while (cin.fail())
+    {
         cout << "Input tidak valid. Harap masukkan angka." << endl;
         cout << "> ";
         cin.clear();
-        cin.ignore(256,'\n');
+        cin.ignore(256, '\n');
         cin >> choice;
     }
     cout << choice << endl;
@@ -403,8 +411,8 @@ void cari_resep_makanan()
         string namaResep, bahan, langkah;
         getline(ss, namaResep, ',');
         if (!namaResep.empty() && namaResep.front() == '"')
-            namaResep = namaResep.substr(1, namaResep.size() - 2 );
-            
+            namaResep = namaResep.substr(1, namaResep.size() - 2);
+
         getline(ss, bahan, ',');
         getline(ss, langkah);
 
@@ -424,7 +432,7 @@ void cari_resep_makanan()
             cout << border_thin;
 
             cout << "Nama Resep     : " << namaResep << endl;
-            cout << "Bahan-bahan    :" << endl;
+            cout << "Bahan-bahan    : " << endl;
             stringstream bahanSS(bahan);
             string pair;
             while (getline(bahanSS, pair, ';'))
@@ -492,7 +500,7 @@ void hapus_resep()
         return;
     }
 
-    Recipe daftar[100]; 
+    Recipe daftar[100];
     string line;
     int jumlah = 0;
 
@@ -507,7 +515,7 @@ void hapus_resep()
 
         // simpan ke array
         daftar[jumlah].name = nama;
-        daftar[jumlah].ingredient = nullptr; 
+        daftar[jumlah].ingredient = nullptr;
         daftar[jumlah].steps.push_back(langkah);
         jumlah++;
     }
@@ -530,7 +538,7 @@ void hapus_resep()
         return;
     }
 
-    nomor--; 
+    nomor--;
 
     ofstream outfile("database/recipe.csv");
     for (int i = 0; i < jumlah; i++)
@@ -551,7 +559,6 @@ void hapus_resep()
 
     cout << "Resep berhasil dihapus!" << endl;
 }
-
 
 int main()
 {
