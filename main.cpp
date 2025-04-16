@@ -333,12 +333,14 @@ int nav(const vector<string> &pages)
     cout << border_thin;
     cout << "Navigasi ke halaman: ";
     cin >> choice;
-    if (choice < 0 || choice > pages.size())
-    {
-        cout << "Pilihan tidak valid" << endl;
-        return -1;
+    while(cin.fail()) {
+        cout << "Input tidak valid. Harap masukkan angka." << endl;
+        cout << "> ";
+        cin.clear();
+        cin.ignore(256,'\n');
+        cin >> choice;
     }
-    cout << endl;
+    cout << choice << endl;
     return choice;
 }
 
@@ -368,6 +370,7 @@ void resep_gkada()
     string judul = "Resep tidak ditemukan";
     title(&judul);
     nav({"Kembali"});
+    return;
 }
 
 void cari_resep_makanan()
