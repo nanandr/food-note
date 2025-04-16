@@ -15,8 +15,8 @@ Aplikasi Manajemen Resep Makanan (Food Note)
 #include <vector>
 using namespace std;
 
-struct Ingredient
-{
+
+struct Ingredient {
     string name;
     string amount;
     Ingredient *next;
