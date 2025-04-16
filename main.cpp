@@ -15,8 +15,8 @@ Aplikasi Manajemen Resep Makanan (Food Note)
 #include <vector>
 using namespace std;
 
-
-struct Ingredient {
+struct Ingredient
+{
     string name;
     string amount;
     Ingredient *next;
@@ -40,12 +40,29 @@ void app_name(const std::string &text)
     cout << border_thick;
 }
 
-void title(const std::string &text)
+void title(string* text) {
+    cout << border_thin;
+    cout << *text << endl << endl;
+    cout << border_thin;
+}
+
+void show_main_menu()
 {
-    cout << border_thin;
-    cout << text << endl
-         << endl;
-    cout << border_thin;
+    cout << "\n";
+    cout << "========================"    << endl;
+    cout << "|                      |"    << endl;
+    cout << "|      Food Note       |"    << endl;
+    cout << "|                      |"    << endl;
+    cout << "========================"    << endl;
+    cout << "|[1] Buat Resep Baru   |"    << endl;
+    cout << "|[2] Daftar Resep      |"    << endl;
+    cout << "|[3] Cari Resep        |"    << endl;
+    cout << "|[4] Edit Resep        |"    << endl;
+    cout << "|[5] Hapus Resep       |"    << endl;
+    cout << "|[0] Keluar            |"    << endl;
+    cout << "|                      |"  << endl;
+    cout << "------------------------"    << endl;
+    cout << "Navigasi ke halaman > ";
 }
 
 /*
@@ -61,6 +78,12 @@ void tambah_resep_makanan()
         cout << "Database tidak ditemukan!" << endl;
         return;
     }
+
+    cout << "\n" ;
+
+    cout << border_thick;
+    cout << "| Tambah Resep Makanan |" << endl;
+    cout << border_thick;
 
     cout << "Nama Hidangan: ";
     cin.ignore();
@@ -333,7 +356,7 @@ int nav(const vector<string> &pages)
     return choice;
 }
 
-void lihat_recipe_makanan()
+void lihat_semua_resep_makanan()
 {
     ifstream *file = new ifstream("database/recipe.csv");
     if (!file->is_open())
@@ -357,7 +380,7 @@ void lihat_recipe_makanan()
 void resep_gkada()
 {
     string judul = "Resep tidak ditemukan";
-    title(judul);
+    title(&judul);
     nav({"Kembali"});
 }
 
@@ -365,7 +388,7 @@ void cari_resep_makanan()
 {
     cin.ignore();
     string judul = "Cari Resep";
-    title(judul);
+    title(&judul);
 
     string keyword;
     cout << "Nama Hidangan: ";
@@ -412,20 +435,71 @@ void cari_resep_makanan()
     }
 }
 
+/*
+HAPUS RESEP MAKANAN
+*/
+int pilih_resep_akan_dihapus(int jumlah)
+{
+    int urutan;
+    while (true)
+    {
+        cout << "Masukkan nomor resep yang ingin dihapus: ";
+        cin >> urutan;
+
+        if (urutan >= 1 && urutan <= jumlah)
+        {
+            return urutan - 1;
+        }
+        else
+        {
+            cout << "Nomor tidak valid! Silahkan coba lagi.\n\n";
+        }
+    }
+}
+
+void hapus_resep(int nomor, int jumlah, Recipe daftar[])
+{
+    ofstream file("database/recipe.csv");
+    if (!file.is_open())
+    {
+        cout << "Gagal membuka file" << endl;
+        return;
+    }
+
+    for (int i = 0; i < jumlah; i++)
+    {
+        if (i != nomor)
+        {
+            // jadiin steps biar satu string aja
+            string combinedSteps;
+            for (size_t j = 0; j < daftar[i].steps.size(); ++j)
+            {
+                combinedSteps += daftar[i].steps[j];
+                if (j != daftar[i].steps.size() - 1)
+                {
+                    combinedSteps += " | ";
+                }
+            }
+
+            file << daftar[i].name << ", "
+                 << daftar[i].ingredient << ", "
+                 << combinedSteps << "\n";
+        }
+    }
+
+    file.close();
+    cout << "Resep berhasil dihapus!" << endl;
+}
+
 int main()
 {
-    // navigation value
     int nav = 0;
-
-    // title
-    title("Food Note");
 
     // main loop
     while (true)
     {
-
-        // navigation
-        int nav = 0;
+        show_main_menu();
+        cin >> nav;
 
         // Buat Resep Baru
         if (nav == 1)
@@ -450,7 +524,7 @@ int main()
         // Delete Resep
         else if (nav == 5)
         {
-
+            lihat_resep_makanan();
         }
 
         // Keluar
@@ -459,7 +533,8 @@ int main()
             break;
         }
 
-        else {
+        else
+        {
             cout << "Input tidak valid!" << endl;
         }
     }
