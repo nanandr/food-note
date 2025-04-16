@@ -13,6 +13,7 @@ Aplikasi Manajemen Resep Makanan (Food Note)
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 struct Ingredient
@@ -40,28 +41,31 @@ void app_name(const std::string &text)
     cout << border_thick;
 }
 
-void title(string* text) {
+void title(string *text)
+{
     cout << border_thin;
-    cout << *text << endl << endl;
+    cout << *text << endl
+         << endl;
     cout << border_thin;
 }
 
 void show_main_menu()
 {
     cout << "\n";
-    cout << "========================"    << endl;
-    cout << "|                      |"    << endl;
-    cout << "|      Food Note       |"    << endl;
-    cout << "|                      |"    << endl;
-    cout << "========================"    << endl;
-    cout << "|[1] Buat Resep Baru   |"    << endl;
-    cout << "|[2] Daftar Resep      |"    << endl;
-    cout << "|[3] Cari Resep        |"    << endl;
-    cout << "|[4] Edit Resep        |"    << endl;
-    cout << "|[5] Hapus Resep       |"    << endl;
-    cout << "|[0] Keluar            |"    << endl;
-    cout << "|                      |"  << endl;
-    cout << "------------------------"    << endl;
+    cout << "========================" << endl;
+    cout << "|                      |" << endl;
+    cout << "|      Food Note       |" << endl;
+    cout << "|                      |" << endl;
+    cout << "========================" << endl;
+    cout << "|                      |" << endl;
+    cout << "| [1] Buat Resep Baru  |" << endl;
+    cout << "| [2] Daftar Resep     |" << endl;
+    cout << "| [3] Cari Resep       |" << endl;
+    cout << "| [4] Edit Resep       |" << endl;
+    cout << "| [5] Hapus Resep      |" << endl;
+    cout << "| [0] Keluar           |" << endl;
+    cout << "|                      |" << endl;
+    cout << "------------------------" << endl;
     cout << "Navigasi ke halaman > ";
 }
 
@@ -79,7 +83,7 @@ void tambah_resep_makanan()
         return;
     }
 
-    cout << "\n" ;
+    cout << "\n";
 
     cout << border_thick;
     cout << "| Tambah Resep Makanan |" << endl;
@@ -136,7 +140,7 @@ void tambah_resep_makanan()
     Ingredient *current = resep.ingredient;
     while (current)
     {
-        ingreadientStream << current->name << ":" << current->amount;
+        ingreadientStream << current->name << "(x" << current->amount << ")";
         if (current->next)
             ingreadientStream << ";";
         current = current->next;
@@ -170,7 +174,11 @@ void lihat_resep_makanan()
     }
 
     string line;
-    cout << " ---------- Daftar Resep Makanan ---------- " << endl;
+    int count_resep = 1;
+
+    cout << border_thick;
+    cout << "| Daftar Resep Makanan |" << endl;
+    cout << border_thick;
     while (getline(file, line))
     {
         stringstream ss(line);
@@ -187,31 +195,9 @@ void lihat_resep_makanan()
         if (!langkahCSV.empty() && langkahCSV.front() == '"')
             langkahCSV = langkahCSV.substr(1, langkahCSV.size() - 2);
 
-        cout << "Nama Hidangan : " << nama << endl;
-
-        cout << "Bahan-bahan   :" << endl;
-        stringstream bahanSS(bahanCSV);
-        string pair;
-        while (getline(bahanSS, pair, ';'))
-        {
-            size_t pos = pair.find(':');
-            if (pos != string::npos)
-            {
-                string ingName = pair.substr(0, pos);
-                string ingAmount = pair.substr(pos + 1);
-                cout << "- " << ingName << " (" << ingAmount << ")" << endl;
-            }
-        }
-
-        cout << "Cara Memasak  :" << endl;
-        stringstream langkahSS(langkahCSV);
-        string step;
-        int stepNum = 1;
-        while (getline(langkahSS, step, '|'))
-        {
-            cout << "Langkah " << stepNum++ << ": " << step << endl;
-        }
-        cout << "-------------------------------------------" << endl;
+        cout << "[" << count_resep << "] " << nama << endl;
+        count_resep += 1;
+        cout << border_thin;
     }
 
     file.close();
@@ -358,7 +344,7 @@ int nav(const vector<string> &pages)
 
 void lihat_semua_resep_makanan()
 {
-    ifstream *file = new ifstream("database/recipe.csv");
+    ifstream *file = new ifstream("./database/recipe.csv");
     if (!file->is_open())
     {
         cout << "Database tidak ditemukan!" << endl;
@@ -387,16 +373,15 @@ void resep_gkada()
 void cari_resep_makanan()
 {
     cin.ignore();
-    string judul = "Cari Resep";
-    title(&judul);
+    cout << border_thick;
+    cout << "|  Cari Resep Makanan  |" << endl;
+    cout << border_thick;
 
     string keyword;
     cout << "Nama Hidangan: ";
     getline(cin, keyword);
 
-    cout << border_thin;
-
-    ifstream *file = new ifstream("database/recipe.csv");
+    ifstream *file = new ifstream("./database/recipe.csv");
     if (!file->is_open())
     {
         cout << "Database tidak ditemukan!" << endl;
@@ -409,18 +394,50 @@ void cari_resep_makanan()
     while (getline(*file, line))
     {
         stringstream ss(line);
-        string id, namaResep, bahan, langkah;
-        getline(ss, id, ',');
+        string namaResep, bahan, langkah;
         getline(ss, namaResep, ',');
         getline(ss, bahan, ',');
         getline(ss, langkah);
 
-        if (keyword == namaResep)
+        // jadiin lowercase dulu keyword sama nama resep nya
+        string namaResepLower = namaResep;
+        string keywordLower = keyword;
+        transform(namaResepLower.begin(), namaResepLower.end(), namaResepLower.begin(), ::tolower);
+        transform(keywordLower.begin(), keywordLower.end(), keywordLower.begin(), ::tolower);
+
+        // komparasi keyword dengan namaresep, apakah sama atau tidak
+        int compare = keywordLower.compare(namaResepLower);
+        if (compare == 0)
         {
-            cout << "Resep ditemukan!\n";
-            cout << "Nama   : " << namaResep << endl;
-            cout << "Bahan  : " << bahan << endl;
-            cout << "Langkah: " << langkah << endl;
+            cout << endl;
+            cout << border_thin;
+            cout << "|   Resep ditemukan!   |\n";
+            cout << border_thin;
+
+            cout << "Nama Resep     : " << namaResep << endl;
+            cout << "Bahan-bahan    :" << endl;
+            stringstream bahanSS(bahan);
+            string pair;
+            while (getline(bahanSS, pair, ';'))
+            {
+                size_t pos = pair.find(':');
+                if (pos != string::npos)
+                {
+                    string ingName = pair.substr(0, pos);
+                    string ingAmount = pair.substr(pos + 1);
+                    cout << u8"• " << ingName << " (" << ingAmount << ")" << endl;
+                }
+            }
+
+            cout << "How to Cook    :" << endl;
+            stringstream langkahSS(langkah);
+            string step;
+            int stepNum = 1;
+            while (getline(langkahSS, step, '|'))
+            {
+                cout << "Langkah " << stepNum++ << ": " << step << endl;
+            }
+
             found = true;
             break;
         }
@@ -524,7 +541,6 @@ int main()
         // Delete Resep
         else if (nav == 5)
         {
-            lihat_resep_makanan();
         }
 
         // Keluar
