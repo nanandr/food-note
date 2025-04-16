@@ -140,7 +140,7 @@ void tambah_resep_makanan()
     Ingredient *current = resep.ingredient;
     while (current)
     {
-        ingreadientStream << current->name << "(x" << current->amount << ")";
+        ingreadientStream << current->name << ":" << current->amount << "";
         if (current->next)
             ingreadientStream << ";";
         current = current->next;
@@ -228,21 +228,24 @@ void edit_resep_makanan()
 
     file.close();
 
-    int id;
-    cout << "Masukkan ID resep yang ingin diedit; ";
-    cin >> id;
+    string namaResep;
+    cout << "Masukkan nama resep yang ingin diedit: ";
     cin.ignore();
+    getline(cin, namaResep);
+    if (!namaResep.empty() && namaResep.front() == '"')
+        namaResep = namaResep.substr(1, namaResep.size() - 2 );
+
+    cout << "\"namaResep\"";
 
     bool found = false;
 
     for (int i = 1; i < lines.size(); i++)
     {
         stringstream ss(lines[i]);
-        string token;
-        getline(ss, token, ',');
-        int currentID = stoi(token);
+        string currentRecipeName;
+        getline(ss, currentRecipeName, ',');
 
-        if (currentID == id)
+        if (currentRecipeName == namaResep)
         {
             found = true;
             string nama, bahan, langkah;
@@ -292,7 +295,7 @@ void edit_resep_makanan()
             if (!langkahBaru.empty())
                 langkah = langkahBaru;
 
-            lines[i] = to_string(currentID) + "," + nama + "," + bahan + "," + langkah;
+            lines[i] = nama + "," + bahan + "," + langkah;
             break;
         }
     }
@@ -431,7 +434,7 @@ void cari_resep_makanan()
                 {
                     string ingName = pair.substr(0, pos);
                     string ingAmount = pair.substr(pos + 1);
-                    cout << u8"• " << ingName << " (" << ingAmount << ")" << endl;
+                    cout << "- " << ingName << " (" << ingAmount << ")" << endl;
                 }
             }
 
