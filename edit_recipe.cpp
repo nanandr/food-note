@@ -6,9 +6,6 @@
 using namespace std;
 
 
-
-
-
 void edit_recipe_makanan(const string& filename) 
 {
     ifstream file(filename);
