@@ -44,8 +44,7 @@ void app_name(const std::string &text)
 void title(string *text)
 {
     cout << border_thin;
-    cout << *text << endl
-         << endl;
+    cout << *text << endl;
     cout << border_thin;
 }
 
