@@ -61,6 +61,35 @@ void hapus_sesi()
     }
 }
 
+vector<string> dapatkan_sesi()
+{
+    // dapetin sesi saat ini kalau login berhasil
+    string line;
+    ifstream rsession("./database/session.csv", ios::app);
+    if (!rsession)
+    {
+        cout << "Sesi tidak ditemukan!" << endl;
+        return {""};
+    }
+    cout << "\n";
+
+    getline(rsession, line);
+    stringstream ss(line);
+    string session_id;
+    string session_surel;
+    string session_kata_sandi;
+    string session_nama_pengguna;
+
+    getline(ss, session_id, ',');
+    getline(ss, session_surel, ',');
+    getline(ss, session_kata_sandi, ',');
+    getline(ss, session_nama_pengguna, ',');
+
+    vector<string> current_session = {session_id, session_surel, session_kata_sandi, session_nama_pengguna};
+
+    return current_session;
+}
+
 void login_signup_menu()
 {
     cout << "\n";
@@ -686,34 +715,15 @@ int main()
         if (nav == 1)
         {
             while(true) {
-                int status_login = login_menu();
+                int login_status = login_menu();
 
-                if (status_login == 1)
+                if (login_status == 1)
                 {
                     // dapetin sesi saat ini kalau login berhasil
-                    string line;
-                    ifstream rsession("./database/session.csv", ios::app);
-                    if (!rsession)
-                    {
-                        cout << "Sesi tidak ditemukan!" << endl;
-                        return 0;
-                    }
-                    cout << "\n";
-    
-                    getline(rsession, line);
-                    stringstream ss(line);
-                    string session_id;
-                    string session_surel;
-                    string session_kata_sandi;
-                    string session_nama_pengguna;
-    
-                    getline(ss, session_id, ',');
-                    getline(ss, session_surel, ',');
-                    getline(ss, session_kata_sandi, ',');
-                    getline(ss, session_nama_pengguna, ',');
+                    vector<string> current_session = dapatkan_sesi();
     
                     cout << "Anda berhasil masuk." << endl;
-                    cout << "Selamat datang " << session_nama_pengguna << "!" << endl;
+                    cout << "Selamat datang " << current_session[3] << "!" << endl;
                     nav = 0;
     
                     while (true)
@@ -759,11 +769,11 @@ int main()
                         }
                     }
                 }
-                else if (status_login == 0)
+                else if (login_status == 0)
                 {
                     cout << "Surel atau kata sandi salah. Harap ulangi kembali." << endl;
                 }
-                else if (status_login == -1)
+                else if (login_status == -1)
                 {
                     break;
                 }
