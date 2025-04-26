@@ -53,6 +53,13 @@
         "xtr1common": "cpp",
         "xutility": "cpp",
         "algorithm": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "*.tcc": "cpp",
+        "unordered_map": "cpp",
+        "string_view": "cpp",
+        "array": "cpp",
+        "deque": "cpp",
+        "span": "cpp",
+        "text_encoding": "cpp"
     }
 }

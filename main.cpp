@@ -48,6 +48,119 @@ void title(string *text)
     cout << border_thin;
 }
 
+void hapus_sesi()
+{
+    ofstream file("./database/session.csv", ios::trunc);
+
+    if (file.is_open())
+    {
+        file.close();
+    } else
+    {
+        cout << "Gagal mengapus sesi." << endl;
+    }
+}
+
+void login_signup_menu()
+{
+    cout << "\n";
+    cout << "===========================" << endl;
+    cout << "|                         |" << endl;
+    cout << "| Selamat datang di       |" << endl;
+    cout << "| Food Note!              |" << endl;
+    cout << "| Silahkan masuk/daftar   |" << endl;
+    cout << "|                         |" << endl;
+    cout << "===========================" << endl;
+    cout << "|                         |" << endl;
+    cout << "|  [1] Masuk              |" << endl;
+    cout << "|  [2] Daftar             |" << endl;
+    cout << "|  [3] Hentikan Program   |" << endl;
+    cout << "|                         |" << endl;
+    cout << "===========================" << endl;
+    cout << "Navigasi ke halaman > ";
+}
+
+int login_menu()
+{
+    ifstream rfile("./database/users.csv", ios::app);
+    if (!rfile)
+    {
+        cout << "Basis data tidak ditemukan!" << endl;
+        return 0;
+    }
+    cout << "\n";
+
+    string line;
+    string inp_surel_pengguna;
+    string inp_kata_sandi;
+    char del = ','; // delimiter pemisah string
+
+    cout << "\n";
+    cout << "========================" << endl;
+    cout << "|                      |" << endl;
+    cout << "|  Masuk               |" << endl;
+    cout << "|                      |" << endl;
+    cout << "========================" << endl;
+    cout << "Masukkan surel pengguna (\"kembali\" untuk kembali ke menu awal)" << endl;
+    cout << "> ";
+    cin >> inp_surel_pengguna;
+
+    // jadiin lowercase buat input surel
+    string surel_pengguna_lower = inp_surel_pengguna;
+    transform(surel_pengguna_lower.begin(), surel_pengguna_lower.end(), surel_pengguna_lower.begin(), ::tolower);
+
+    // kalau inputannya "kembali" pas input surel, return -1
+    int compareInputToExit = surel_pengguna_lower.compare("kembali");
+    if (compareInputToExit == 0) {
+        return -1;
+    }
+    cout << "Masukkan kata sandi " << endl;
+    cout << "> ";
+    cin >> inp_kata_sandi;
+    
+    // cek tiap baris csv apakah ada yang serupa
+    while (getline(rfile, line))
+    {
+        stringstream ss(line);
+        string id;
+        string surel;
+        string kata_sandi;
+        string nama_pengguna;
+
+        getline(ss, id, ',');
+        getline(ss, surel, ',');
+        getline(ss, kata_sandi, ',');
+        getline(ss, nama_pengguna, ',');
+
+        int compareSurel = surel_pengguna_lower.compare(surel);
+        int compareKataSandi = inp_kata_sandi.compare(kata_sandi);
+
+        if ((compareSurel == 0) && (compareKataSandi == 0))
+        {
+            /* 
+            hapus sesi yg lama (kalau ada)
+            terus bikin sesi baru dari pengguna yang masuk tadi 
+            */
+            hapus_sesi();
+
+            ofstream wsession("./database/session.csv", ios::app);
+            if (wsession.is_open())
+            {
+                wsession << id << "," << surel << "," << kata_sandi << "," << nama_pengguna << "\n";
+                wsession.close();
+            }
+            else
+            {
+                cout << "Gagal membuat sesi baru." << endl;
+            }
+
+            return 1; // success
+        }
+    }
+
+    return 0;
+}
+
 void show_main_menu()
 {
     cout << "\n";
@@ -78,7 +191,7 @@ void tambah_resep_makanan()
 
     if (!file)
     {
-        cout << "Database tidak ditemukan!" << endl;
+        cout << "Basis data tidak ditemukan!!" << endl;
         return;
     }
 
@@ -168,7 +281,7 @@ void lihat_resep_makanan()
     ifstream file("./database/recipe.csv");
     if (!file)
     {
-        cout << "Database tidak ditemukan!" << endl;
+        cout << "Basis data tidak ditemukan!!" << endl;
         return;
     }
 
@@ -210,7 +323,7 @@ void edit_resep_makanan()
     ifstream file("./database/recipe.csv");
     if (!file.is_open())
     {
-        cout << "Database tidak ditemukan!" << endl;
+        cout << "Basis data tidak ditemukan!!" << endl;
         return;
     }
 
@@ -359,7 +472,7 @@ void lihat_semua_resep_makanan()
     ifstream *file = new ifstream("./database/recipe.csv");
     if (!file->is_open())
     {
-        cout << "Database tidak ditemukan!" << endl;
+        cout << "Basis data tidak ditemukan!!" << endl;
         delete file;
         return;
     }
@@ -397,7 +510,7 @@ void cari_resep_makanan()
     ifstream *file = new ifstream("./database/recipe.csv");
     if (!file->is_open())
     {
-        cout << "Database tidak ditemukan!" << endl;
+        cout << "Basis data tidak ditemukan!!" << endl;
         delete file;
         return;
     }
@@ -495,7 +608,7 @@ void hapus_resep()
     ifstream file("database/recipe.csv");
     if (!file.is_open())
     {
-        cout << "Gagal membuka file!" << endl;
+        cout << "Gagal membuka arsip!" << endl;
         return;
     }
 
@@ -562,48 +675,116 @@ void hapus_resep()
 int main()
 {
     int nav = 0;
+    bool logout = false;
 
-    // main loop
+    // login/register loop
     while (true)
     {
-        show_main_menu();
+        login_signup_menu();
         cin >> nav;
 
-        // Buat Resep Baru
         if (nav == 1)
         {
-            tambah_resep_makanan();
+            while(true) {
+                int status_login = login_menu();
+
+                if (status_login == 1)
+                {
+                    // dapetin sesi saat ini kalau login berhasil
+                    string line;
+                    ifstream rsession("./database/session.csv", ios::app);
+                    if (!rsession)
+                    {
+                        cout << "Sesi tidak ditemukan!" << endl;
+                        return 0;
+                    }
+                    cout << "\n";
+    
+                    getline(rsession, line);
+                    stringstream ss(line);
+                    string session_id;
+                    string session_surel;
+                    string session_kata_sandi;
+                    string session_nama_pengguna;
+    
+                    getline(ss, session_id, ',');
+                    getline(ss, session_surel, ',');
+                    getline(ss, session_kata_sandi, ',');
+                    getline(ss, session_nama_pengguna, ',');
+    
+                    cout << "Anda berhasil masuk." << endl;
+                    cout << "Selamat datang " << session_nama_pengguna << "!" << endl;
+                    nav = 0;
+    
+                    while (true)
+                    {
+                        show_main_menu();
+                        cin >> nav;
+    
+                        // Buat Resep Baru
+                        if (nav == 1)
+                        {
+                            tambah_resep_makanan();
+                        }
+                        // Daftar Resep
+                        else if (nav == 2)
+                        {
+                            lihat_resep_makanan();
+                        }
+                        // Cari Resep
+                        else if (nav == 3)
+                        {
+                            cari_resep_makanan();
+                        }
+                        // Edit Resep
+                        else if (nav == 4)
+                        {
+                            edit_resep_makanan();
+                        }
+                        // Delete Resep
+                        else if (nav == 5)
+                        {
+                            hapus_resep();
+                        }
+                        // Keluar
+                        else if (nav == 0)
+                        {
+                            hapus_sesi();
+                            logout = true;
+                            break;
+                        }
+                        else
+                        {
+                            cout << "Input tidak valid!" << endl;
+                        }
+                    }
+                }
+                else if (status_login == 0)
+                {
+                    cout << "Surel atau kata sandi salah. Harap ulangi kembali." << endl;
+                }
+                else if (status_login == -1)
+                {
+                    break;
+                }
+
+                // langsung ke halaman awal kalau udah logout
+                if (logout) break;
+            }
         }
-        // Daftar Resep
         else if (nav == 2)
         {
-            lihat_resep_makanan();
+            // register_menu();
         }
-        // Cari Resep
         else if (nav == 3)
         {
-            cari_resep_makanan();
-        }
-        // Edit Resep
-        else if (nav == 4)
-        {
-            edit_resep_makanan();
-        }
-        // Delete Resep
-        else if (nav == 5)
-        {
-            hapus_resep();
-        }
-
-        // Keluar
-        else if (nav == 0)
-        {
+            cout << "Terima kasih telah menggunakan Food Note!";
+            hapus_sesi();
             break;
         }
-
         else
         {
-            cout << "Input tidak valid!" << endl;
+            cout << "Input tidak valid." << endl;
         }
     }
 }
