@@ -226,6 +226,20 @@ int register_menu()
     cout << "Buat kata sandi baru" << endl;
     cout << "> ";
     cin >> inp_kata_sandi;
+
+    // tambah kredensial pengguna baru ke dalem csv, tulis baris baru
+    ofstream wregistuser("./database/session.csv", ios::app);
+    if (wregistuser.is_open())
+    {
+        wregistuser << 1 << "," << inp_surel_pengguna << "," << inp_kata_sandi << "," << inp_nama_pengguna << "\n";
+        wregistuser.close();
+    }
+    else
+    {
+        cout << "Gagal membuat pengguna baru." << endl;
+    }
+
+    return 0;
 }
 
 // menghapus screen
