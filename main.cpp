@@ -226,7 +226,16 @@ int register_menu()
     cout << "Buat kata sandi baru" << endl;
     cout << "> ";
     cin >> inp_kata_sandi;
+}
 
+// menghapus screen
+void clearScreen ()
+{
+    #ifdef _WIN32
+        system("cls"); // Windows
+    #else
+        system("clear"); // Linux / Mac
+    #endif
 }
 
 void show_main_menu()
@@ -338,6 +347,7 @@ void tambah_resep_makanan()
     file << "\"" << stepsStream.str() << "\"" << endl;
 
     file.close();
+    clearScreen ();
     cout << "Resep makanan berhasil ditambahkan." << endl;
 }
 
@@ -500,6 +510,7 @@ void edit_resep_makanan()
     }
     outFile.close();
 
+    clearScreen ();
     cout << "Resep berhasil diperbarui!" << endl;
 }
 
@@ -737,6 +748,7 @@ void hapus_resep()
     }
     outfile.close();
 
+    clearScreen ();
     cout << "Resep berhasil dihapus!" << endl;
 }
 
@@ -750,6 +762,7 @@ int main()
     {
         login_signup_menu();
         cin >> nav;
+        clearScreen ();
 
         if (nav == 1)
         {
@@ -760,7 +773,8 @@ int main()
                 {
                     // dapetin sesi saat ini kalau login berhasil
                     vector<string> current_session = dapatkan_sesi();
-    
+                    
+                    clearScreen ();
                     cout << "Anda berhasil masuk." << endl;
                     cout << "Selamat datang " << current_session[3] << "!" << endl;
                     nav = 0;
@@ -773,31 +787,37 @@ int main()
                         // Buat Resep Baru
                         if (nav == 1)
                         {
+                            clearScreen ();
                             tambah_resep_makanan();
                         }
                         // Daftar Resep
                         else if (nav == 2)
                         {
+                            clearScreen ();
                             lihat_resep_makanan();
                         }
                         // Cari Resep
                         else if (nav == 3)
                         {
+                            clearScreen ();
                             cari_resep_makanan();
                         }
                         // Edit Resep
                         else if (nav == 4)
                         {
+                            clearScreen ();
                             edit_resep_makanan();
                         }
                         // Delete Resep
                         else if (nav == 5)
                         {
+                            clearScreen ();
                             hapus_resep();
                         }
                         // Keluar
                         else if (nav == 0)
                         {
+                            clearScreen ();
                             hapus_sesi();
                             logout = true;
                             break;
