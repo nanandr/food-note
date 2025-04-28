@@ -12,3 +12,4 @@ $(TARGET): $(SRC)
 
 clean:
 	del $(TARGET)
+
