@@ -90,6 +90,34 @@ vector<string> dapatkan_sesi()
     return current_session;
 }
 
+int get_latest_userid()
+{
+    ifstream file("./database/users.csv");
+    string line;
+    int maxId = 0;
+
+    if (!file) {
+        cout << "Basis data tidak ditemukan!" << endl;
+        return 0;
+    }
+
+    while (getline(file, line))
+    {
+        stringstream ss(line);
+        string idStr;
+        getline(ss, idStr, ',');
+        
+        int id = stoi(idStr); // stoi: string to integer
+        if (id > maxId) {
+            maxId = id;
+        }
+    }
+
+    int nextId = maxId + 1;
+
+    return nextId;
+}
+
 void login_signup_menu()
 {
     cout << "\n";
@@ -218,6 +246,7 @@ int register_menu()
     if (compareInputToExit == 0) {
         return -1;
     }
+    cin.ignore();
 
     cout << "Masukkan nama pengguna" << endl;
     cout << "> ";
@@ -227,16 +256,26 @@ int register_menu()
     cout << "> ";
     cin >> inp_kata_sandi;
 
+    // ambil id terbesar dan terbaru di users.csv
+    int id = get_latest_userid();
+    if (id == 0)
+    {
+        cout << "Gagal mendaftar pengguna baru." << endl;
+        return 0;
+    }
+
     // tambah kredensial pengguna baru ke dalem csv, tulis baris baru
-    ofstream wregistuser("./database/session.csv", ios::app);
+    ofstream wregistuser("./database/users.csv", ios::app);
     if (wregistuser.is_open())
     {
-        wregistuser << 1 << "," << inp_surel_pengguna << "," << inp_kata_sandi << "," << inp_nama_pengguna << "\n";
+        wregistuser << id << "," << inp_surel_pengguna << "," << inp_kata_sandi << "," << inp_nama_pengguna << "\n";
         wregistuser.close();
+
+        cout << "Registrasi Berhasil!" << endl;
     }
     else
     {
-        cout << "Gagal membuat pengguna baru." << endl;
+        cout << "Gagal mendaftar pengguna baru." << endl;
     }
 
     return 0;
@@ -857,7 +896,7 @@ int main()
         }
         else if (nav == 2)
         {
-            // register_menu();
+            register_menu();
         }
         else if (nav == 3)
         {
