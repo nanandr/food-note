@@ -471,25 +471,32 @@ void edit_resep_makanan()
 
     file.close();
 
-    string namaResep;
+    string keyword;
     cout << "Masukkan nama resep yang ingin diedit: ";
     cin.ignore();
-    getline(cin, namaResep);
+    getline(cin, keyword);
 
+    string keywordLower = keyword;
+    transform(keywordLower.begin(), keywordLower.end(), keywordLower.begin(), ::tolower);
+    
     bool found = false;
-
+    
     for (int i = 1; i < lines.size(); i++)
     {
+        
         stringstream ss(lines[i]);
         string currentRecipeName, bahan, langkah;
         getline(ss, currentRecipeName, ',');
         getline(ss, bahan, ',');
         getline(ss, langkah, ',');
+        
+        string namaResepLower = currentRecipeName;
+        transform(namaResepLower.begin(), namaResepLower.end(), namaResepLower.begin(), ::tolower);
+        
+        if (!namaResepLower.empty() && namaResepLower.front() == '"')
+        namaResepLower = namaResepLower.substr(1, namaResepLower.size() - 2);
 
-        if (!currentRecipeName.empty() && currentRecipeName.front() == '"')
-            currentRecipeName = currentRecipeName.substr(1, currentRecipeName.size() - 2);
-
-        if (currentRecipeName == namaResep)
+        if (namaResepLower == keywordLower)
         {
             found = true;
 
