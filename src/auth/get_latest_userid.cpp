@@ -1,4 +1,3 @@
-
 #include "utils/get_db_path.h"
 #include "auth/get_latest_userid.h"
 #include <iostream>

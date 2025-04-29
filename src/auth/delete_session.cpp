@@ -16,6 +16,6 @@ void deleteSession()
         file.close();
     } else
     {
-        cout << "Gagal mengapus sesi." << endl;
+        cout << "Gagal menghapus sesi." << endl;
     }
 }
