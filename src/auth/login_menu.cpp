@@ -1,5 +1,6 @@
-#include "delete_session.h"
-#include "login_menu.h"
+#include "utils/get_db_path.h"
+#include "auth/delete_session.h"
+#include "auth/login_menu.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -8,11 +9,14 @@ using namespace std;
 
 int loginMenu()
 {
-    ifstream rfile("./database/users.csv", ios::app);
+    string users_db_path = getDBPath("users.csv");
+    string session_db_path = getDBPath("session.csv");
+
+    ifstream rfile(users_db_path, ios::app);
     if (!rfile)
     {
         cout << "Basis data tidak ditemukan!" << endl;
-        return 0;
+        return -1;
     }
     cout << "\n";
 
@@ -69,7 +73,7 @@ int loginMenu()
             */
             deleteSession();
 
-            ofstream wsession("./database/session.csv", ios::app);
+            ofstream wsession(session_db_path, ios::app);
             if (wsession.is_open())
             {
                 wsession << id << "," << surel << "," << kata_sandi << "," << nama_pengguna << "\n";

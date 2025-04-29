@@ -1,18 +1,19 @@
-#include "show_all_recipe.h"
+#include "utils/get_db_path.h"
+#include "utils/borders.h"
+#include "recipe/show_all_recipe.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
 using namespace std;
-
-string border_thick = "======================== \n";
-string border_thin = "------------------------ \n";
 
 /*
 LIHAT RESEP MAKANAN
 */
 void showAllRecipe()
 {
-    ifstream file("./database/recipe.csv");
+    string db_path = getDBPath("recipe.csv");
+
+    ifstream file(db_path);
     if (!file)
     {
         cout << "Basis data tidak ditemukan!!" << endl;

@@ -1,4 +1,6 @@
-#include "recipe_not_found.h"
+#include "utils/get_db_path.h"
+#include "utils/borders.h"
+#include "recipe/recipe_not_found.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -6,11 +8,10 @@
 #include <algorithm>
 using namespace std;
 
-string border_thick = "======================== \n";
-string border_thin = "------------------------ \n";
-
 void findRecipe()
 {
+    string db_path = getDBPath("recipe.csv");
+
     cin.ignore();
     cout << border_thick;
     cout << "|  Cari Resep Makanan  |" << endl;
@@ -20,7 +21,7 @@ void findRecipe()
     cout << "Nama Hidangan: ";
     getline(cin, keyword);
 
-    ifstream *file = new ifstream("./database/recipe.csv");
+    ifstream *file = new ifstream(db_path);
     if (!file->is_open())
     {
         cout << "Basis data tidak ditemukan!!" << endl;

@@ -1,4 +1,6 @@
-#include "get_latest_userid.h"
+
+#include "utils/get_db_path.h"
+#include "auth/get_latest_userid.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -6,7 +8,9 @@ using namespace std;
 
 int getLatestUserId()
 {
-    ifstream file("./database/users.csv");
+    string db_path = getDBPath("users.csv");
+
+    ifstream file(db_path, ios::app);
     string line;
     int maxId = 0;
 

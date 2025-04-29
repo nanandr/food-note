@@ -1,5 +1,6 @@
-#include "register_menu.h"
-#include "get_latest_userid.h"
+#include "utils/get_db_path.h"
+#include "auth/register_menu.h"
+#include "auth/get_latest_userid.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -52,8 +53,10 @@ int registerMenu()
         return 0;
     }
 
+    string db_path = getDBPath("users.csv");
+
     // tambah kredensial pengguna baru ke dalem csv, tulis baris baru
-    ofstream wregistuser("./database/users.csv", ios::app);
+    ofstream wregistuser(db_path, ios::app);
     if (wregistuser.is_open())
     {
         wregistuser << id << "," << inp_surel_pengguna << "," << inp_kata_sandi << "," << inp_nama_pengguna << "\n";

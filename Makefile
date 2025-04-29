@@ -1,9 +1,9 @@
 CXX = g++
-CXXFLAGS = -Iinclude -std=c++11
+CXXFLAGS = -Iinclude -std=c++17
 
 SRC = $(wildcard src/*.cpp src/auth/*.cpp src/recipe/*.cpp src/utils/*.cpp)
 
-TARGET = my_app
+TARGET = food-note
 
 all: $(TARGET)
 

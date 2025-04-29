@@ -1,5 +1,6 @@
-#include "edit_recipe.h"
-#include "clear_screen.h"
+#include "utils/get_db_path.h"
+#include "utils/clear_screen.h"
+#include "recipe/edit_recipe.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -12,7 +13,9 @@ UPDATE RESEP MAKANAN
 */
 void editRecipe()
 {
-    ifstream file("./database/recipe.csv");
+    string db_path = getDBPath("recipe.csv");
+
+    ifstream file(db_path);
     if (!file.is_open())
     {
         cout << "Basis data tidak ditemukan!!" << endl;
@@ -124,7 +127,7 @@ void editRecipe()
         return;
     }
 
-    ofstream outFile("./database/recipe.csv");
+    ofstream outFile(db_path);
     for (const string &l : lines)
     {
         outFile << l << "\n";

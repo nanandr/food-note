@@ -9,23 +9,24 @@ Aplikasi Manajemen Resep Makanan (Food Note)
 5. Raihan Fauzi Rakhman (2403872)
 */
 
-#include "../include/recipe/add_recipe.h"
-#include "../include/recipe/delete_recipe.h"
-#include "../include/recipe/edit_recipe.h"
-#include "../include/recipe/find_recipe.h"
-#include "../include/recipe/recipe_struct.h"
-#include "../include/recipe/recipe_not_found.h"
-#include "../include/recipe/show_all_recipe.h"
-#include "../include/recipe/show_main_menu.h"
+#include "recipe/add_recipe.h"
+#include "recipe/delete_recipe.h"
+#include "recipe/edit_recipe.h"
+#include "recipe/find_recipe.h"
+#include "recipe/recipe_struct.h"
+#include "recipe/recipe_not_found.h"
+#include "recipe/show_all_recipe.h"
+#include "recipe/show_main_menu.h"
 
-#include "../include/auth/login_menu.h"
-#include "../include/auth/login_signup_menu.h"
-#include "../include/auth/register_menu.h"
-#include "../include/auth/get_session.h"
-#include "../include/auth/delete_session.h"
-#include "../include/auth/get_latest_userid.h"
+#include "auth/login_menu.h"
+#include "auth/login_signup_menu.h"
+#include "auth/register_menu.h"
+#include "auth/get_session.h"
+#include "auth/delete_session.h"
+#include "auth/get_latest_userid.h"
 
-#include "../include/utils/clear_screen.h"
+#include "utils/clear_screen.h"
+#include "utils/borders.h"
 
 #include <iostream>
 #include <fstream>
@@ -33,38 +34,6 @@ Aplikasi Manajemen Resep Makanan (Food Note)
 #include <vector>
 #include <algorithm>
 using namespace std;
-
-string border_thick = "======================== \n";
-string border_thin = "------------------------ \n";
-
-int nav(const vector<string> &pages)
-{
-    int choice;
-    for (int i = 0; i < pages.size(); i++)
-    {
-        if (pages[i] == "Kembali" || pages[i] == "Keluar")
-        {
-            cout << "[0] " << pages[i] << endl;
-        }
-        else
-        {
-            cout << "[" << i + 1 << "] " << pages[i] << endl;
-        }
-    }
-    cout << border_thin;
-    cout << "Navigasi ke halaman: ";
-    cin >> choice;
-    while (cin.fail())
-    {
-        cout << "Input tidak valid. Harap masukkan angka." << endl;
-        cout << "> ";
-        cin.clear();
-        cin.ignore(256, '\n');
-        cin >> choice;
-    }
-    cout << choice << endl;
-    return choice;
-}
 
 int main()
 {

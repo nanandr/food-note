@@ -1,3 +1,5 @@
+
+#include "utils/get_db_path.h"
 #include <iostream>
 #include <stdio.h>
 #include <vector>
@@ -7,9 +9,11 @@ using namespace std;
 
 vector<string> getSession()
 {
+    string db_path = getDBPath("session.csv");
+
     // dapetin sesi saat ini kalau login berhasil
     string line;
-    ifstream rsession("./database/session.csv", ios::app);
+    ifstream rsession(db_path, ios::app);
     if (!rsession)
     {
         cout << "Sesi tidak ditemukan!" << endl;

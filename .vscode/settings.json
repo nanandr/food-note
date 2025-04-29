@@ -68,5 +68,6 @@
         "random": "cpp",
         "numbers": "cpp",
         "variant": "cpp"
-    }
+    },
+    "makefile.configureOnOpen": true
 }

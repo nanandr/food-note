@@ -1,6 +1,7 @@
-#include "recipe_struct.h"
-#include "clear_screen.h"
-#include "delete_recipe.h"
+#include "utils/get_db_path.h"
+#include "utils/clear_screen.h"
+#include "recipe/delete_recipe.h"
+#include "recipe/recipe_struct.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -11,7 +12,9 @@ HAPUS RESEP MAKANAN
 */
 void deleteRecipe()
 {
-    ifstream file("database/recipe.csv");
+    string db_path = getDBPath("recipe.csv");
+
+    ifstream file(db_path);
     if (!file.is_open())
     {
         cout << "Gagal membuka arsip!" << endl;
@@ -58,7 +61,7 @@ void deleteRecipe()
 
     nomor--;
 
-    ofstream outfile("database/recipe.csv");
+    ofstream outfile(db_path);
     for (int i = 0; i < jumlah; i++)
     {
         if (i == nomor)

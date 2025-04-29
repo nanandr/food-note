@@ -1,5 +1,7 @@
-#include "clear_screen.h"
-#include "add_recipe.h"
+#include "utils/get_db_path.h"
+#include "utils/clear_screen.h"
+#include "utils/borders.h"
+#include "recipe/add_recipe.h"
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -21,16 +23,15 @@ struct Recipe
     vector<string> steps;
 };
 
-string border_thick = "======================== \n";
-string border_thin = "------------------------ \n";
-
 /*
 TAMBAH RESEP MAKANAN
 */
 void addRecipe()
 {
+    string db_path = getDBPath("recipe.csv");
+
     Recipe recipe;
-    ofstream file("./database/recipe.csv", ios::app);
+    ofstream file(db_path, ios::app);
 
     if (!file)
     {
